@@ -27,5 +27,5 @@ jobs:
       with:
         python-version: 3.x
     - run: pip install --upgrade pip
-    - run: pip install -r requirements.txt
+    - run: pip install pylint
     - run: pylint --disable=all --enable=unused-import $(git ls-files '*.py')
