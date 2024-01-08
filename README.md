@@ -9,3 +9,5 @@
 To provide an easy method of charging batteries connected to a Growatt SPH inverter using MQTT.
 
 <h3>Inspirations and Credits</h3>
+
+- https://github.com/jackbrown1993/growatt-weather-based-charger
