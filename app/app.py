@@ -97,10 +97,10 @@ def on_message(mqttc, obj, msg):
     if msg.topic == "growatt_charge_script/charge_state/desired":
         new_state = msg.payload.decode()
 
-        if (new_state == 'charge'):
+        if new_state == "charge":
             log.info("Received request to start charging batteries.")
             charge_battery()
-        elif (new_state == 'discharge'):
+        elif new_state == "discharge":
             log.info("Received request to stop charging batteries.")
             discharge_battery()
         else:
@@ -166,6 +166,7 @@ async def start_app():
             await asyncio.sleep(1)  # Adjust sleep duration as needed
     finally:
         mqtt_client.disconnect()
+
 
 if __name__ == "__main__":
     asyncio.run(start_app())
