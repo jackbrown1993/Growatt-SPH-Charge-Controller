@@ -63,21 +63,21 @@ async def start_mqtt():
     mqtt_client.loop_start()
 
     mqtt_client.publish(
-        "growatt_charge_script/charge_state/actual",
+        "growatt_rs485/growatt_battery_charge",
         payload="unknown",
         qos=0,
         retain=False,
     )
 
     mqtt_client.publish(
-        "growatt_charge_script/charge_state/desired",
+        "growatt_rs485/growatt_battery_charge/set",
         payload="unknown",
         qos=0,
         retain=False,
     )
 
     # Subscribe to MQTT
-    mqtt_client.subscribe("growatt_charge_script/charge_state/desired")
+    mqtt_client.subscribe("growatt_rs485/growatt_battery_charge/set")
 
 
 def on_connect(mqttc, obj, flags, rc):
@@ -94,7 +94,7 @@ def on_message(mqttc, obj, msg):
         + " with value: "
         + msg.payload.decode()
     )
-    if msg.topic == "growatt_charge_script/charge_state/desired":
+    if msg.topic == "growatt_rs485/growatt_battery_charge/set":
         new_state = msg.payload.decode()
 
         if new_state == "charge":
