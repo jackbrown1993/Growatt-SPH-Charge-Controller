@@ -97,10 +97,10 @@ def on_message(mqttc, obj, msg):
     if msg.topic == "growatt_rs485/growatt_battery_charge/set":
         new_state = msg.payload.decode()
 
-        if new_state == "charge":
+        if new_state == "on":
             log.info("Received request to start charging batteries.")
             charge_battery()
-        elif new_state == "discharge":
+        elif new_state == "off":
             log.info("Received request to stop charging batteries.")
             discharge_battery()
         else:
@@ -155,6 +155,52 @@ def discharge_battery():
             client.close()
 
 
+def check_charge_status():
+    try:
+        # Connect to the Modbus TCP server (RS485 to TCP gateway)
+        client = ModbusTcpClient(rs485_tcp_gateway_ip, port=rs485_tcp_gateway_port)
+
+        # 0 = Load First (Battery Discharging)
+        # 1 = Battery First (Battery Charging)
+        # 2 = Grid First
+        inverter_mode = client.read_holding_registers(1044, int=1, unit=1)
+
+        if inverter_mode.registers[0] == 0:
+            log.info("Inverter mode is 'Load First', so battery is serving load / charging from PV.")
+            mqtt_client.publish(
+                "growatt_rs485/growatt_battery_charge",
+                payload="off",
+                qos=0,
+                retain=False,
+            )
+        elif inverter_mode.registers[0] == 1:
+            log.info("Inverter mode is 'Battery First', so battery is charging from grid.")
+            mqtt_client.publish(
+                "growatt_rs485/growatt_battery_charge",
+                payload="on",
+                qos=0,
+                retain=False,
+            )
+        elif inverter_mode.registers[0] == 2:
+            log.info("Inverter mode is 'Grid First', so battery isn't being used.")
+            mqtt_client.publish(
+                "growatt_rs485/growatt_battery_charge",
+                payload="off",
+                qos=0,
+                retain=False,
+            )
+        else:
+            log.error("Unable to determine battery charge status.")
+
+    except Exception as e:
+        print(f"Error: {e}")
+
+    finally:
+        # Close the Modbus TCP connection
+        if client:
+            client.close()
+
+
 async def start_app():
     global mqtt_client
     # Connect to MQTT
@@ -163,8 +209,10 @@ async def start_app():
     try:
         # Run the event loop indefinitely to keep the script alive
         while True:
-            await asyncio.sleep(1)  # Adjust sleep duration as needed
+            check_charge_status()
+            await asyncio.sleep(5)  # Adjust sleep duration as needed
     finally:
+        log.info("Disconnecting from MQTT")
         mqtt_client.disconnect()
 
 
