@@ -9,6 +9,11 @@ import paho.mqtt.client as mqtt
 logging.basicConfig(level=logging.INFO, format="%(asctime)s:%(levelname)s:%(message)s")
 log = logging.getLogger("__name__")
 
+if "MQTT_PORT" not in os.environ:
+    mqtt_port = 1883
+else:
+    mqtt_port = int(os.environ.get("MQTT_PORT"))
+
 if "MQTT_IP" not in os.environ:
     log.error(
         "MQTT IP not provided, please provide IP address or hostname of your MQTT server."
@@ -31,31 +36,26 @@ if "MQTT_PASSWORD" not in os.environ:
 else:
     mqtt_password = os.environ.get("MQTT_PASSWORD")
 
-if "INVERTER_IP" not in os.environ:
+if "RS485_TCP_GATEWAY_IP" not in os.environ:
     log.error(
-        "Growatt inverter IP not provided, please provide IP address or hostname of your Growatt inverter."
+        "IP for the RS485 TCP Gateway not provided, please provide IP address or hostname of your RS485 to TCP adaptor / server."
     )
     sys.exit(1)
 else:
     inverter_ip = os.environ.get("INVERTER_IP")
 
-if "INVERTER_PORT" not in os.environ:
+if "RS485_TCP_GATEWAY_PORT" not in os.environ:
     log.error(
-        "Growatt inverter port not provided, please provide port of your Growatt inverter."
+        "Port for the RS485 TCP Gateway not provided, please provide the port of your RS485 to TCP adaptor / server."
     )
     sys.exit(1)
 else:
     inverter_port = os.environ.get("INVERTER_PORT")
 
-if "MQTT_PORT" not in os.environ:
-    mqtt_port = 1883
-else:
-    mqtt_port = int(os.environ.get("MQTT_PORT"))
-
 
 async def start_mqtt():
     global mqtt_client
-    mqtt_client = mqtt.Client("growatt-charge-client")
+    mqtt_client = mqtt.Client("growatt-rs485-mqtt-client")
     mqtt_client.username_pw_set(username=mqtt_user, password=mqtt_password)
     mqtt_client.on_connect = on_connect
     mqtt_client.on_message = on_message
