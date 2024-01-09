@@ -1,0 +1,2 @@
+paho-mqtt
+pyModbus==2.3.0

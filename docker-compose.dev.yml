@@ -1,10 +1,10 @@
 version: '3.8'
 services:
 
-  growatt-sph-charge:
+  growatt-rs485-mqtt:
     build:
       context: .
-    container_name: growatt-sph-charge
+    container_name: growatt-rs485-mqtt
     restart: unless-stopped
     env_file:
       - .env

@@ -1,10 +1,11 @@
-FROM python:alpine as base
+FROM python:3.10-slim
 
 WORKDIR /app
 
-COPY app/requirements.txt .
-RUN pip install -r requirements.txt
+COPY requirements.txt .
+
+RUN pip3 install -r requirements.txt
 
 ADD app/*.py ./
-ENTRYPOINT ["python3"]
-CMD ["-u","app.py"]
+ENTRYPOINT ["python3", "app.py"]
+CMD ["-u"]
