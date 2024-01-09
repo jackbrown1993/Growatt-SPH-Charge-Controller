@@ -1,0 +1,9 @@
+version: '3.8'
+services:
+
+  growatt-rs485-mqtt:
+    image: ghcr.io/jackbrown1993/growatt-rs485-mqtt:latest
+    container_name: growatt-rs485-mqtt
+    restart: unless-stopped
+    env_file:
+      - .env
