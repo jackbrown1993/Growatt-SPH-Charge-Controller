@@ -42,7 +42,7 @@ if "RS485_TCP_GATEWAY_IP" not in os.environ:
     )
     sys.exit(1)
 else:
-    inverter_ip = os.environ.get("INVERTER_IP")
+    rs485_tcp_gateway_ip = os.environ.get("RS485_TCP_GATEWAY_IP")
 
 if "RS485_TCP_GATEWAY_PORT" not in os.environ:
     log.error(
@@ -50,7 +50,7 @@ if "RS485_TCP_GATEWAY_PORT" not in os.environ:
     )
     sys.exit(1)
 else:
-    inverter_port = os.environ.get("INVERTER_PORT")
+    rs485_tcp_gateway_port = os.environ.get("RS485_TCP_GATEWAY_PORT")
 
 
 async def start_mqtt():
@@ -112,7 +112,7 @@ def on_message(mqttc, obj, msg):
 def charge_battery():
     try:
         # Connect to the Modbus TCP server (RS485 to TCP gateway)
-        client = ModbusTcpClient(inverter_ip, port=inverter_port)
+        client = ModbusTcpClient(rs485_tcp_gateway_ip, port=rs485_tcp_gateway_port)
 
         on = [0, 23 * 256 + 59, 1]
         off = [0, 23 * 256 + 59, 0]
@@ -135,7 +135,7 @@ def charge_battery():
 def discharge_battery():
     try:
         # Connect to the Modbus TCP server (RS485 to TCP gateway)
-        client = ModbusTcpClient(inverter_ip, port=inverter_port)
+        client = ModbusTcpClient(rs485_tcp_gateway_ip, port=rs485_tcp_gateway_port)
 
         on = [0, 23 * 256 + 59, 1]
         off = [0, 23 * 256 + 59, 0]
