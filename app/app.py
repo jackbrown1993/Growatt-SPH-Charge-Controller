@@ -76,13 +76,12 @@ async def start_mqtt():
         retain=False,
     )
 
-    # Subscribe to MQTT
-    mqtt_client.subscribe("growatt_rs485/growatt_battery_charge/set")
-
 
 def on_connect(mqttc, obj, flags, rc):
     """This is triggered whenever we connect to MQTT"""
     log.info("Connected to MQTT.")
+    # Subscribe to MQTT
+    mqtt_client.subscribe("growatt_rs485/growatt_battery_charge/set")
 
 
 def on_message(mqttc, obj, msg):
