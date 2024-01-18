@@ -165,7 +165,9 @@ def check_charge_status():
         inverter_mode = client.read_holding_registers(1044, int=1, unit=1)
 
         if inverter_mode.registers[0] == 0:
-            log.info("Inverter mode is 'Load First', so battery is serving load / charging from PV.")
+            log.info(
+                "Inverter mode is 'Load First', so battery is serving load / charging from PV."
+            )
             mqtt_client.publish(
                 "growatt_rs485/growatt_battery_charge",
                 payload="off",
@@ -173,7 +175,9 @@ def check_charge_status():
                 retain=False,
             )
         elif inverter_mode.registers[0] == 1:
-            log.info("Inverter mode is 'Battery First', so battery is charging from grid.")
+            log.info(
+                "Inverter mode is 'Battery First', so battery is charging from grid."
+            )
             mqtt_client.publish(
                 "growatt_rs485/growatt_battery_charge",
                 payload="on",
