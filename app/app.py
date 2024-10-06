@@ -18,7 +18,9 @@ rs485_tcp_gateway_ip = os.environ.get("RS485_TCP_GATEWAY_IP")
 rs485_tcp_gateway_port = os.environ.get("RS485_TCP_GATEWAY_PORT")
 
 # Exit if required environment variables are not set
-if not all([mqtt_ip, mqtt_user, mqtt_password, rs485_tcp_gateway_ip, rs485_tcp_gateway_port]):
+if not all(
+    [mqtt_ip, mqtt_user, mqtt_password, rs485_tcp_gateway_ip, rs485_tcp_gateway_port]
+):
     log.error("Missing required environment variables. Please check the configuration.")
     sys.exit(1)
 
@@ -37,7 +39,7 @@ async def start_mqtt():
         mqtt_client.connect(mqtt_ip, mqtt_port)
         mqtt_client.loop_start()
         log.info("MQTT connection started.")
-        
+
         mqtt_client.publish(
             "growatt_rs485/growatt_battery_charge",
             payload="unknown",
@@ -66,7 +68,9 @@ def on_connect(mqttc, obj, flags, rc):
 
 def on_message(mqttc, obj, msg):
     """Callback when receiving an MQTT message"""
-    log.info(f"MQTT message received: topic={msg.topic}, payload={msg.payload.decode()}")
+    log.info(
+        f"MQTT message received: topic={msg.topic}, payload={msg.payload.decode()}"
+    )
     if msg.topic == "growatt_rs485/growatt_battery_charge/set":
         handle_battery_command(msg.payload.decode())
 
