@@ -63,7 +63,6 @@ async def start_mqtt():
         log.error(f"Failed to connect to MQTT broker: {e}")
 
 
-
 # Callback when successfully connected to the MQTT broker
 def on_connect(mqttc, obj, flags, rc):
     if rc == 0:
