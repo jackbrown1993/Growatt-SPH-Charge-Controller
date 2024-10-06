@@ -27,8 +27,6 @@ if not all(
     log.error("Missing required environment variables. Please check the configuration.")
     sys.exit(1)
 
-
-# Initialize and start MQTT client
 # Initialize and start MQTT client
 async def start_mqtt():
     global mqtt_client
