@@ -29,9 +29,10 @@ if not all(
 
 
 # Initialize and start MQTT client
+# Initialize and start MQTT client
 async def start_mqtt():
     global mqtt_client
-    mqtt_client = mqtt.Client("growatt-rs485-mqtt-client")
+    mqtt_client = mqtt.Client("growatt-rs485-mqtt-client", callback_api_version=5)
     mqtt_client.username_pw_set(username=mqtt_user, password=mqtt_password)
     mqtt_client.on_connect = on_connect  # Set callback for connection
     mqtt_client.on_message = on_message  # Set callback for received messages
@@ -60,6 +61,7 @@ async def start_mqtt():
 
     except Exception as e:
         log.error(f"Failed to connect to MQTT broker: {e}")
+
 
 
 # Callback when successfully connected to the MQTT broker
