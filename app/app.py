@@ -16,10 +16,14 @@ mqtt_ip = os.environ.get("MQTT_IP")  # MQTT broker IP address
 mqtt_user = os.environ.get("MQTT_USER")  # MQTT broker username
 mqtt_password = os.environ.get("MQTT_PASSWORD")  # MQTT broker password
 rs485_tcp_gateway_ip = os.environ.get("RS485_TCP_GATEWAY_IP")  # Modbus TCP gateway IP
-rs485_tcp_gateway_port = os.environ.get("RS485_TCP_GATEWAY_PORT")  # Modbus TCP gateway port
+rs485_tcp_gateway_port = os.environ.get(
+    "RS485_TCP_GATEWAY_PORT"
+)  # Modbus TCP gateway port
 
 # Check if required environment variables are set
-if not all([mqtt_ip, mqtt_user, mqtt_password, rs485_tcp_gateway_ip, rs485_tcp_gateway_port]):
+if not all(
+    [mqtt_ip, mqtt_user, mqtt_password, rs485_tcp_gateway_ip, rs485_tcp_gateway_port]
+):
     log.error("Missing required environment variables. Please check the configuration.")
     sys.exit(1)
 
@@ -62,14 +66,18 @@ async def start_mqtt():
 def on_connect(mqttc, obj, flags, rc):
     if rc == 0:
         log.info("Connected to MQTT broker.")
-        mqtt_client.subscribe("growatt_rs485/growatt_battery_charge/set")  # Subscribe to a topic
+        mqtt_client.subscribe(
+            "growatt_rs485/growatt_battery_charge/set"
+        )  # Subscribe to a topic
     else:
         log.error(f"Failed to connect to MQTT broker. Return code: {rc}")
 
 
 # Callback when a message is received from MQTT
 def on_message(mqttc, obj, msg):
-    log.info(f"MQTT message received: topic={msg.topic}, payload={msg.payload.decode()}")
+    log.info(
+        f"MQTT message received: topic={msg.topic}, payload={msg.payload.decode()}"
+    )
     if msg.topic == "growatt_rs485/growatt_battery_charge/set":
         handle_battery_command(msg.payload.decode())  # Handle battery control command
 
@@ -110,9 +118,11 @@ def charge_battery():
         client = ModbusTcpClient(rs485_tcp_gateway_ip, port=rs485_tcp_gateway_port)
         on = [0, 23 * 256 + 59, 1]
         off = [0, 23 * 256 + 59, 0]
-        client.write_registers(1100, on, unit=1)  # (BF1) Send Modbus command to start charging
-        client.write_registers(1110, off, unit=1) # LF1
-        client.write_registers(1080, off, unit=1) # GF1
+        client.write_registers(
+            1100, on, unit=1
+        )  # (BF1) Send Modbus command to start charging
+        client.write_registers(1110, off, unit=1)  # LF1
+        client.write_registers(1080, off, unit=1)  # GF1
     except Exception as e:
         log.error(f"Error during battery charging: {e}")
     finally:
@@ -126,9 +136,11 @@ def discharge_battery():
         client = ModbusTcpClient(rs485_tcp_gateway_ip, port=rs485_tcp_gateway_port)
         on = [0, 23 * 256 + 59, 1]
         off = [0, 23 * 256 + 59, 0]
-        client.write_registers(1100, off, unit=1)  # (BF1) Send Modbus command to stop charging
-        client.write_registers(1110, on, unit=1) # LF1
-        client.write_registers(1080, off, unit=1) # GF1
+        client.write_registers(
+            1100, off, unit=1
+        )  # (BF1) Send Modbus command to stop charging
+        client.write_registers(1110, on, unit=1)  # LF1
+        client.write_registers(1080, off, unit=1)  # GF1
     except Exception as e:
         log.error(f"Error during battery discharging: {e}")
     finally:
