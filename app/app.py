@@ -154,7 +154,7 @@ def discharge_battery():
             client.close()
 
 
-def check_charge_status():
+async def check_charge_status():
     try:
         # Connect to the Modbus TCP server (RS485 to TCP gateway)
         client = ModbusTcpClient(rs485_tcp_gateway_ip, port=rs485_tcp_gateway_port)
