@@ -2,13 +2,14 @@ import os
 import sys
 import logging
 import asyncio
+import paho.mqtt.client as mqtt
 from pymodbus.client.sync import ModbusTcpClient
 
-import paho.mqtt.client as mqtt
-
+# Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s:%(levelname)s:%(message)s")
 log = logging.getLogger("__name__")
 
+# Check environment variables
 if "MQTT_PORT" not in os.environ:
     mqtt_port = 1883
 else:
@@ -50,9 +51,7 @@ if "RS485_TCP_GATEWAY_PORT" not in os.environ:
     )
     sys.exit(1)
 else:
-    rs485_tcp_gateway_port = int(
-        os.environ.get("RS485_TCP_GATEWAY_PORT")
-    )  # Ensure port is an integer
+    rs485_tcp_gateway_port = int(os.environ.get("RS485_TCP_GATEWAY_PORT"))
 
 
 async def start_mqtt():
