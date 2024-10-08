@@ -51,9 +51,7 @@ if "RS485_TCP_GATEWAY_PORT" not in os.environ:
     )
     sys.exit(1)
 else:
-    rs485_tcp_gateway_port = int(
-        os.environ.get("RS485_TCP_GATEWAY_PORT")
-    )
+    rs485_tcp_gateway_port = int(os.environ.get("RS485_TCP_GATEWAY_PORT"))
 
 
 async def start_mqtt():
