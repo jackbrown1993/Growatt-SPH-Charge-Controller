@@ -86,7 +86,6 @@ def on_connect(mqttc, obj, flags, rc):
 
 def on_message(mqttc, obj, msg):
     """This is triggered whenever we recieve a message on MQTT"""
-    global spa
     log.info(
         "MQTT message received on topic: "
         + msg.topic
@@ -155,6 +154,7 @@ def discharge_battery():
 
 
 async def check_charge_status():
+    client = None
     try:
         # Connect to the Modbus TCP server (RS485 to TCP gateway)
         client = ModbusTcpClient(rs485_tcp_gateway_ip, port=rs485_tcp_gateway_port)
