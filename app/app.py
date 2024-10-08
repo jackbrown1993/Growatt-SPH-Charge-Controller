@@ -50,7 +50,7 @@ if "RS485_TCP_GATEWAY_PORT" not in os.environ:
     )
     sys.exit(1)
 else:
-    rs485_tcp_gateway_port = os.environ.get("RS485_TCP_GATEWAY_PORT")
+    rs485_tcp_gateway_port = int(os.environ.get("RS485_TCP_GATEWAY_PORT"))  # Ensure port is an integer
 
 
 async def start_mqtt():
@@ -85,7 +85,7 @@ def on_connect(mqttc, obj, flags, rc):
 
 
 def on_message(mqttc, obj, msg):
-    """This is triggered whenever we recieve a message on MQTT"""
+    """This is triggered whenever we receive a message on MQTT"""
     log.info(
         "MQTT message received on topic: "
         + msg.topic
@@ -97,20 +97,22 @@ def on_message(mqttc, obj, msg):
 
         if new_state == "on":
             log.info("Received request to start charging batteries.")
-            charge_battery()
+            asyncio.run(charge_battery())
         elif new_state == "off":
             log.info("Received request to stop charging batteries.")
-            discharge_battery()
+            asyncio.run(discharge_battery())
         else:
             log.info("Unhandled MQTT message on topic {}.".format(msg.topic))
     else:
         log.debug("Unhandled MQTT message on topic {}.".format(msg.topic))
 
 
-def charge_battery():
+async def charge_battery():
+    client = None
     try:
         # Connect to the Modbus TCP server (RS485 to TCP gateway)
         client = ModbusTcpClient(rs485_tcp_gateway_ip, port=rs485_tcp_gateway_port)
+        client.connect()  # Ensure the client is connected
 
         on = [0, 23 * 256 + 59, 1]
         off = [0, 23 * 256 + 59, 0]
@@ -122,7 +124,7 @@ def charge_battery():
         # GF1
         client.write_registers(1080, off, unit=1)
     except Exception as e:
-        print(f"Error: {e}")
+        log.error(f"Error while charging battery: {e}")
 
     finally:
         # Close the Modbus TCP connection
@@ -130,10 +132,12 @@ def charge_battery():
             client.close()
 
 
-def discharge_battery():
+async def discharge_battery():
+    client = None
     try:
         # Connect to the Modbus TCP server (RS485 to TCP gateway)
         client = ModbusTcpClient(rs485_tcp_gateway_ip, port=rs485_tcp_gateway_port)
+        client.connect()  # Ensure the client is connected
 
         on = [0, 23 * 256 + 59, 1]
         off = [0, 23 * 256 + 59, 0]
@@ -145,7 +149,7 @@ def discharge_battery():
         # GF1
         client.write_registers(1080, off, unit=1)
     except Exception as e:
-        print(f"Error: {e}")
+        log.error(f"Error while discharging battery: {e}")
 
     finally:
         # Close the Modbus TCP connection
@@ -158,11 +162,12 @@ async def check_charge_status():
     try:
         # Connect to the Modbus TCP server (RS485 to TCP gateway)
         client = ModbusTcpClient(rs485_tcp_gateway_ip, port=rs485_tcp_gateway_port)
+        client.connect()  # Ensure the client is connected
 
         # 0 = Load First (Battery Discharging)
         # 1 = Battery First (Battery Charging)
         # 2 = Grid First
-        inverter_mode = client.read_holding_registers(1044, int=1, unit=1)
+        inverter_mode = client.read_holding_registers(1044, count=1, unit=1)  # Use count instead of int
 
         if inverter_mode.registers[0] == 0:
             log.info(
@@ -196,7 +201,7 @@ async def check_charge_status():
             log.error("Unable to determine battery charge status.")
 
     except Exception as e:
-        print(f"Error: {e}")
+        log.error(f"Error while checking charge status: {e}")
 
     finally:
         # Close the Modbus TCP connection
@@ -212,7 +217,7 @@ async def start_app():
     try:
         # Run the event loop indefinitely to keep the script alive
         while True:
-            check_charge_status()
+            await check_charge_status()
             await asyncio.sleep(5)  # Adjust sleep duration as needed
     finally:
         log.info("Disconnecting from MQTT")
