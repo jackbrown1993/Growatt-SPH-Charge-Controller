@@ -51,7 +51,9 @@ if "RS485_TCP_GATEWAY_PORT" not in os.environ:
     )
     sys.exit(1)
 else:
-    rs485_tcp_gateway_port = int(os.environ.get("RS485_TCP_GATEWAY_PORT"))
+    rs485_tcp_gateway_port = int(
+        os.environ.get("RS485_TCP_GATEWAY_PORT")
+    )
 
 
 async def start_mqtt():
@@ -168,7 +170,7 @@ async def check_charge_status():
         # 0 = Load First (Battery Discharging)
         # 1 = Battery First (Battery Charging)
         # 2 = Grid First
-        inverter_mode = client.read_holding_registers(1044, count=1, unit=1)  # Use count instead of int
+        inverter_mode = client.read_holding_registers(1044, count=1, unit=1)
 
         if inverter_mode.registers[0] == 0:
             log.info(
