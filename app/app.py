@@ -169,9 +169,7 @@ async def check_charge_status():
         # 0 = Load First (Battery Discharging)
         # 1 = Battery First (Battery Charging)
         # 2 = Grid First
-        inverter_mode = client.read_holding_registers(
-            1044, count=1, unit=1
-        )
+        inverter_mode = client.read_holding_registers(1044, count=1, unit=1)
 
         if inverter_mode.registers[0] == 0:
             log.info(
