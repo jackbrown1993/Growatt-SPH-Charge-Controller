@@ -171,7 +171,7 @@ async def check_charge_status():
         # 2 = Grid First
         inverter_mode = client.read_holding_registers(
             1044, count=1, unit=1
-        )  # Use count instead of int
+        )
 
         if inverter_mode.registers[0] == 0:
             log.info(
