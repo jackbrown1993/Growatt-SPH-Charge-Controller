@@ -64,22 +64,28 @@ async def start_mqtt():
     # Log the MQTT connection details
     log.info(f"Connecting to MQTT at {mqtt_ip}:{mqtt_port}")
 
-    mqtt_client.connect(mqtt_ip, mqtt_port)
-    mqtt_client.loop_start()
+    try:
+        mqtt_client.connect(mqtt_ip, mqtt_port)
+        mqtt_client.loop_start()
 
-    mqtt_client.publish(
-        "growatt_rs485/growatt_battery_charge",
-        payload="unknown",
-        qos=0,
-        retain=False,
-    )
+        # Publish example messages after connecting
+        mqtt_client.publish(
+            "growatt_rs485/growatt_battery_charge",
+            payload="unknown",
+            qos=0,
+            retain=False,
+        )
+        mqtt_client.publish(
+            "growatt_rs485/growatt_battery_charge/set",
+            payload="unknown",
+            qos=0,
+            retain=False,
+        )
 
-    mqtt_client.publish(
-        "growatt_rs485/growatt_battery_charge/set",
-        payload="unknown",
-        qos=0,
-        retain=False,
-    )
+    except socket.gaierror as e:
+        log.error(f"DNS resolution failed for MQTT IP '{mqtt_ip}': {e}")
+    except Exception as e:
+        log.error(f"Failed to connect to MQTT server at {mqtt_ip}:{mqtt_port}: {e}")
 
 
 def on_connect(mqttc, obj, flags, rc):
