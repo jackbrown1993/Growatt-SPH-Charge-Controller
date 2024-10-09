@@ -2,6 +2,7 @@ import os
 import sys
 import logging
 import asyncio
+import socket
 import paho.mqtt.client as mqtt
 from pymodbus.client.sync import ModbusTcpClient
 
