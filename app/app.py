@@ -63,7 +63,7 @@ async def start_mqtt():
 
     # Log the MQTT connection details
     log.info(f"Connecting to MQTT at {mqtt_ip}:{mqtt_port}")
-    
+
     try:
         mqtt_client.connect(mqtt_ip, mqtt_port)
         mqtt_client.loop_start()
@@ -86,7 +86,6 @@ async def start_mqtt():
         log.error(f"DNS resolution failed for MQTT IP '{mqtt_ip}': {e}")
     except Exception as e:
         log.error(f"Failed to connect to MQTT server at {mqtt_ip}:{mqtt_port}: {e}")
-
 
 
 def on_connect(mqttc, obj, flags, rc):
