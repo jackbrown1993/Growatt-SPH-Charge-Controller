@@ -60,10 +60,10 @@ async def start_mqtt():
     mqtt_client.username_pw_set(username=mqtt_user, password=mqtt_password)
     mqtt_client.on_connect = on_connect
     mqtt_client.on_message = on_message
-    
+
     # Log the MQTT connection details
     log.info(f"Connecting to MQTT at {mqtt_ip}:{mqtt_port}")
-    
+
     mqtt_client.connect(mqtt_ip, mqtt_port)
     mqtt_client.loop_start()
 
@@ -116,8 +116,10 @@ async def charge_battery():
     client = None
     try:
         # Log the Modbus TCP connection details
-        log.info(f"Connecting to Modbus TCP at {rs485_tcp_gateway_ip}:{rs485_tcp_gateway_port}")
-        
+        log.info(
+            f"Connecting to Modbus TCP at {rs485_tcp_gateway_ip}:{rs485_tcp_gateway_port}"
+        )
+
         # Connect to the Modbus TCP server (RS485 to TCP gateway)
         client = ModbusTcpClient(rs485_tcp_gateway_ip, port=rs485_tcp_gateway_port)
         client.connect()
@@ -144,8 +146,10 @@ async def discharge_battery():
     client = None
     try:
         # Log the Modbus TCP connection details
-        log.info(f"Connecting to Modbus TCP at {rs485_tcp_gateway_ip}:{rs485_tcp_gateway_port}")
-        
+        log.info(
+            f"Connecting to Modbus TCP at {rs485_tcp_gateway_ip}:{rs485_tcp_gateway_port}"
+        )
+
         # Connect to the Modbus TCP server (RS485 to TCP gateway)
         client = ModbusTcpClient(rs485_tcp_gateway_ip, port=rs485_tcp_gateway_port)
         client.connect()
