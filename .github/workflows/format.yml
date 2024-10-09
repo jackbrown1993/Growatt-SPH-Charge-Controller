@@ -7,10 +7,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Format code with black
+      - name: Install pipx
+        run: sudo apt-get install -y pipx
+      - name: Install Black using pipx
         run: |
-          pip install black
-          black .
+          pipx install black
+          pipx run black .
       - name: Commit changes
         uses: EndBug/add-and-commit@v4
         with:
@@ -22,10 +24,10 @@ jobs:
   pylint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
-      with:
-        python-version: 3.x
-    - run: pip install --upgrade pip
-    - run: pip install pylint
-    - run: pylint --disable=all --enable=unused-import $(git ls-files '*.py')
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+      - run: pip install --upgrade pip
+      - run: pip install pylint
+      - run: pylint --disable=all --enable=unused-import $(git ls-files '*.py')
