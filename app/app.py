@@ -60,7 +60,9 @@ else:
     growatt_slave_id = int(1)
 
 log.info(f"MQTT IP: {mqtt_ip}, MQTT Port: {mqtt_port}, MQTT User: {mqtt_user}")
-log.info(f"RS485 TCP IP: {rs485_tcp_gateway_ip}, RS485 TCP Port: {rs485_tcp_gateway_port}")
+log.info(
+    f"RS485 TCP IP: {rs485_tcp_gateway_ip}, RS485 TCP Port: {rs485_tcp_gateway_port}"
+)
 log.info(f"Growatt Slave ID: {growatt_slave_id}")
 
 
