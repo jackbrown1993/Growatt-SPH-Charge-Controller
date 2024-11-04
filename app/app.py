@@ -67,6 +67,7 @@ log.info("RS485 TCP IP: " + rs485_tcp_gateway_ip)
 log.info("RS485 TCP Port: " + rs485_tcp_gateway_port)
 log.info("Growatt Slave ID: " + growatt_slave_id)
 
+
 async def start_mqtt():
     global mqtt_client
     mqtt_client = mqtt.Client("growatt-rs485-mqtt-client")
