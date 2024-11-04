@@ -54,6 +54,11 @@ if "RS485_TCP_GATEWAY_PORT" not in os.environ:
 else:
     rs485_tcp_gateway_port = int(os.environ.get("RS485_TCP_GATEWAY_PORT"))
 
+if "GROWATT_SLAVE_ID" in os.environ:
+    growatt_slave_id = int(os.environ.get("GROWATT_SLAVE_ID"))
+else:
+    growatt_slave_id = int(1)
+
 
 async def start_mqtt():
     global mqtt_client
@@ -135,11 +140,11 @@ async def charge_battery():
         off = [0, 23 * 256 + 59, 0]
 
         # BF1
-        client.write_registers(1100, on, unit=1)
+        client.write_registers(1100, on, unit=growatt_slave_id)
         # LF1
-        client.write_registers(1110, off, unit=1)
+        client.write_registers(1110, off, unit=growatt_slave_id)
         # GF1
-        client.write_registers(1080, off, unit=1)
+        client.write_registers(1080, off, unit=growatt_slave_id)
     except Exception as e:
         log.error(f"Error while charging battery: {e}")
 
@@ -165,11 +170,11 @@ async def discharge_battery():
         off = [0, 23 * 256 + 59, 0]
 
         # BF1
-        client.write_registers(1100, off, unit=1)
+        client.write_registers(1100, off, unit=growatt_slave_id)
         # LF1
-        client.write_registers(1110, on, unit=1)
+        client.write_registers(1110, on, unit=growatt_slave_id)
         # GF1
-        client.write_registers(1080, off, unit=1)
+        client.write_registers(1080, off, unit=growatt_slave_id)
     except Exception as e:
         log.error(f"Error while discharging battery: {e}")
 
@@ -189,7 +194,9 @@ async def check_charge_status():
         # 0 = Load First (Battery Discharging)
         # 1 = Battery First (Battery Charging)
         # 2 = Grid First
-        inverter_mode = client.read_holding_registers(1044, count=1, unit=1)
+        inverter_mode = client.read_holding_registers(
+            1044, count=1, unit=growatt_slave_id
+        )
 
         if inverter_mode.registers[0] == 0:
             log.info(
