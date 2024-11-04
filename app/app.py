@@ -59,13 +59,11 @@ if "GROWATT_SLAVE_ID" in os.environ:
 else:
     growatt_slave_id = int(1)
 
-log.info("MQTT IP: " + mqtt_ip)
-log.info("MQTT Port: " + mqtt_port)
-log.info("MQTT User: " + mqtt_user)
-log.info("MQTT Password: " + mqtt_password)
-log.info("RS485 TCP IP: " + rs485_tcp_gateway_ip)
-log.info("RS485 TCP Port: " + rs485_tcp_gateway_port)
-log.info("Growatt Slave ID: " + growatt_slave_id)
+log.info(f"MQTT IP: {mqtt_ip}, MQTT Port: {mqtt_port}, MQTT User: {mqtt_user}")
+log.info(
+    f"RS485 TCP IP: {rs485_tcp_gateway_ip}, RS485 TCP Port: {rs485_tcp_gateway_port}"
+)
+log.info(f"Growatt Slave ID: {growatt_slave_id}")
 
 
 async def start_mqtt():
